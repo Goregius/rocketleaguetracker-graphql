@@ -35,9 +35,7 @@ class DefaultLeaderboardRatingsUpdateService(
         coroutineScope {
             val ratings = getRatings(pageRange, maxBatchSize).toList()
             leaderboardRatingRepository.deleteAll().awaitFirstOrNull()
-            leaderboardRatingRepository.saveAll(ratings).asFlow().onEach {
-                println(it)
-            }
+            leaderboardRatingRepository.saveAll(ratings).asFlow()
         }
 
     @FlowPreview
