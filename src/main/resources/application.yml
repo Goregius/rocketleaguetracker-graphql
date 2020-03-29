@@ -1,0 +1,32 @@
+graphql:
+  packages:
+    - com.github.goregius
+
+rl-tracker:
+  endpoint:
+    base-url: https://rocketleague.tracker.network
+  page:
+    ranked-rating-leaderboards:
+      ranks-per-page: 100
+---
+spring:
+  profiles: development
+  flyway:
+    url: jdbc:postgresql://localhost:5432/rank_inflation
+    user: postgres
+    password: postgres
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/rank_inflation
+    username: postgres
+    password: postgres
+---
+spring:
+  profiles: production
+  flyway:
+    url: jdbc:${DATABASE_URL}
+    user: postgres
+    password: postgres
+  r2dbc:
+    url: r2dbc:${DATABASE_URL}
+    username: postgres
+    password: postgres
