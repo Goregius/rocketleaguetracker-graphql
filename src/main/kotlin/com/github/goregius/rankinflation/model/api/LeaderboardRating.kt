@@ -38,3 +38,12 @@ data class LeaderboardRating(
     val games: Int,
     val playlist: Playlist
 )
+
+fun LeaderboardRating.toELeaderboardRating() = ELeaderboardRating(
+    id,
+    rank,
+    gamer,
+    rating,
+    games,
+    playlist.number
+)

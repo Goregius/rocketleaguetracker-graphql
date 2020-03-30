@@ -3,18 +3,21 @@ package com.github.goregius.rankinflation.model.entity
 import com.github.goregius.rankinflation.model.api.LeaderboardRating
 import com.github.goregius.rankinflation.model.api.Playlist
 import com.github.goregius.rankinflation.model.api.playlist
-import org.springframework.data.annotation.Id
-import org.springframework.data.relational.core.mapping.Table
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
 
-@Table("leaderboard_rating")
-data class ELeaderboardRating(
+@Entity(name = "LeaderboardRating")
+class ELeaderboardRating(
     @Id
-    val id: Long? = null,
-    val rank: Int,
-    val gamer: String,
-    val rating: Int,
-    val games: Int,
-    val playlist: Int
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null,
+    var rank: Int,
+    var gamer: String,
+    var rating: Int,
+    var games: Int,
+    var playlist: Int
 )
 
 fun ELeaderboardRating.toLeaderboardRating() = LeaderboardRating(

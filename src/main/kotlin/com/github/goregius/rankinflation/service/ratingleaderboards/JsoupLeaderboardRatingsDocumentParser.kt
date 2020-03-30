@@ -1,5 +1,7 @@
 package com.github.goregius.rankinflation.service.ratingleaderboards
 
+import com.github.goregius.rankinflation.model.api.LeaderboardRating
+import com.github.goregius.rankinflation.model.api.Playlist
 import com.github.goregius.rankinflation.model.entity.ELeaderboardRating
 import com.github.goregius.rankinflation.util.PlaylistMappings
 import org.jsoup.Jsoup
@@ -7,9 +9,8 @@ import org.jsoup.nodes.Element
 import org.springframework.stereotype.Service
 
 @Service
-class JsoupLeaderboardRatingsDocumentParser :
-    LeaderboardRatingsDocumentParser {
-    override fun parse(html: String): List<ELeaderboardRating> {
+class JsoupLeaderboardRatingsDocumentParser : LeaderboardRatingsDocumentParser {
+    override fun parse(html: String): List<LeaderboardRating> {
         val document = Jsoup.parse(html)
         val ratingsTableBody = document.select(
             "body > div.container.content-container > div:nth-child(1) > " +
@@ -21,7 +22,7 @@ class JsoupLeaderboardRatingsDocumentParser :
         }
     }
 
-    private fun parseRowToRankedRatingOrNull(row: Element): ELeaderboardRating? {
+    private fun parseRowToRankedRatingOrNull(row: Element): LeaderboardRating? {
         val cells = row.children()
         val rank = cells.getOrNull(0)?.text()?.toIntOrNull() ?: return null
         val gamer = cells.getOrNull(1)
@@ -31,13 +32,13 @@ class JsoupLeaderboardRatingsDocumentParser :
             ?: return null
         val games = cells.getOrNull(3)
             ?.text()?.toIntOrNull() ?: return null
-        return ELeaderboardRating(
+        return LeaderboardRating(
             id = null,
             gamer = gamer,
             rank = rank,
             rating = rating,
             games = games,
-            playlist = PlaylistMappings.STANDARD_3S.id
+            playlist = Playlist.RankedStandard
         )
     }
 }

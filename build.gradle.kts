@@ -3,9 +3,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.3.0.M3"
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
-    kotlin("jvm") version "1.3.70"
-    kotlin("plugin.spring") version "1.3.70"
-    kotlin("kapt") version "1.3.70"
+    kotlin("jvm") version "1.3.71"
+    kotlin("plugin.spring") version "1.3.71"
+    kotlin("kapt") version "1.3.71"
+    kotlin("plugin.jpa") version "1.3.71"
 }
 
 group = "com.github.goregius"
@@ -30,7 +31,7 @@ repositories {
 dependencies {
     implementation("com.expediagroup:graphql-kotlin-spring-server:2.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework:spring-jdbc")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -41,7 +42,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.jsoup:jsoup:1.13.1")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    runtimeOnly("io.r2dbc:r2dbc-postgresql")
     runtimeOnly("org.postgresql:postgresql")
     kapt("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {

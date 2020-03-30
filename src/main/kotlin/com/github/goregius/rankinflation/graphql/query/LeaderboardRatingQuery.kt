@@ -5,9 +5,6 @@ import com.github.goregius.rankinflation.model.api.LeaderboardRating
 import com.github.goregius.rankinflation.model.api.Playlist
 import com.github.goregius.rankinflation.model.entity.toLeaderboardRating
 import com.github.goregius.rankinflation.repository.LeaderboardRatingRepository
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.reactive.asFlow
 import org.springframework.stereotype.Component
 
 @Component
@@ -19,12 +16,10 @@ class LeaderboardRatingQuery(val leaderboardRatingRepository: LeaderboardRatingR
         limit: Long? = null
     ): List<LeaderboardRating> =
         leaderboardRatingRepository
-            .findAllByPlaylistOffsetPaginatedOrderByRank(
+            .findAllByPlaylistOrderByRankOffsetLimit(
                 playlist = playlist?.number ?: Playlist.RankedStandard.number,
                 offset = offset ?: 0,
-                limit = limit
+                limit = limit ?: -1
             )
-            .asFlow()
             .map { it.toLeaderboardRating() }
-            .toList()
 }

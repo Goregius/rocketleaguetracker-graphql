@@ -1,7 +1,9 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
 graphql:
   packages:
     - com.github.goregius
-
 rl-tracker:
   endpoint:
     base-url: https://rocketleague.tracker.network
@@ -15,18 +17,18 @@ spring:
     url: jdbc:postgresql://localhost:5432/rank_inflation
     user: postgres
     password: postgres
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/rank_inflation
+  datasource:
+    url: jdbc:postgresql://localhost:5432/rank_inflation
     username: postgres
     password: postgres
 ---
 spring:
   profiles: production
   flyway:
-    url: jdbc:${DATABASE_URL}
-    user: postgres
-    password: postgres
-  r2dbc:
-    url: r2dbc:${DATABASE_URL}
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL}
+    user: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+  datasource:
+    username: ${SPRING_DATASOURCE_URL}
+    url: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
