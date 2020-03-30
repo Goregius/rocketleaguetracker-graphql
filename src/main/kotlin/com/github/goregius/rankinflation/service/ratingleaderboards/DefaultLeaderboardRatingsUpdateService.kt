@@ -1,6 +1,8 @@
 package com.github.goregius.rankinflation.service.ratingleaderboards
 
 import com.github.goregius.rankinflation.configuration.properties.RlTrackerProperties
+import com.github.goregius.rankinflation.model.api.LeaderboardRating
+import com.github.goregius.rankinflation.model.api.Playlist
 import com.github.goregius.rankinflation.model.api.toELeaderboardRating
 import com.github.goregius.rankinflation.model.entity.ELeaderboardRating
 import com.github.goregius.rankinflation.repository.LeaderboardRatingRepository
@@ -28,10 +30,11 @@ class DefaultLeaderboardRatingsUpdateService(
     @FlowPreview
     override suspend fun updateRankedRatingsByPage(
         pageRange: IntRange,
-        maxBatchSize: Int
+        maxBatchSize: Int,
+        playlist: Playlist
     ): Flow<ELeaderboardRating> =
         coroutineScope {
-            val ratings = getRatings(pageRange, maxBatchSize)
+            val ratings = getRatings(pageRange, maxBatchSize, playlist)
                 .toList().map { it.toELeaderboardRating() }
             leaderboardRatingRepository.deleteAll()
             leaderboardRatingRepository.saveAll(ratings).asFlow()
@@ -40,30 +43,31 @@ class DefaultLeaderboardRatingsUpdateService(
     @FlowPreview
     override suspend fun updateRankedRatingsByRank(
         ranks: Int,
-        maxBatchSize: Int
+        maxBatchSize: Int,
+        playlist: Playlist
     ): Flow<ELeaderboardRating> =
         coroutineScope {
-            val ratings = getRatings(1..ranks / ranksPerPage + 1, maxBatchSize)
+            val ratings = getRatings(1..ranks / ranksPerPage + 1, maxBatchSize, playlist)
                 .toList().map { it.toELeaderboardRating() }
             leaderboardRatingRepository.deleteAll()
             leaderboardRatingRepository.saveAll(ratings.subList(0, ranks)).asFlow()
         }
 
     @FlowPreview
-    private suspend fun getRatings(pageRange: IntRange, maxBatchSize: Int) =
-        retrieveHtmlInBatches(pageRange, maxBatchSize)
+    private suspend fun getRatings(pageRange: IntRange, maxBatchSize: Int, playlist: Playlist): Flow<LeaderboardRating> =
+        retrieveHtmlInBatches(pageRange, maxBatchSize, playlist)
             .map { html ->
-                leaderboardsDocumentParser.parse(html).asFlow()
+                leaderboardsDocumentParser.parse(html, playlist).asFlow()
             }.flattenMerge()
 
-    private fun retrieveHtmlInBatches(pageRange: IntRange, maxBatchSize: Int): Flow<String> =
+    private fun retrieveHtmlInBatches(pageRange: IntRange, maxBatchSize: Int, playlist: Playlist): Flow<String> =
         flowInBatches(pageRange, maxBatchSize) {
-            retrieveHtml(it)
+            retrieveHtml(it, playlist)
         }
 
-    private suspend fun retrieveHtml(page: Int): String = rlTrackerWebClient
+    private suspend fun retrieveHtml(page: Int, playlist: Playlist): String = rlTrackerWebClient
         .get()
-        .uri("/ranked-leaderboards/all/13?page=$page")
+        .uri("/ranked-leaderboards/all/${playlist.number}?page=$page")
         .retrieve()
         .awaitBody()
 }

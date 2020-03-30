@@ -1,6 +1,7 @@
 package com.github.goregius.rankinflation.graphql.mutation
 
 import com.expediagroup.graphql.spring.operations.Mutation
+import com.github.goregius.rankinflation.model.api.Playlist
 import com.github.goregius.rankinflation.service.ratingleaderboards.LeaderboardRatingsUpdateService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.count
@@ -15,6 +16,10 @@ class LeaderboardRatingMutation(
 ) : Mutation {
     @ExperimentalCoroutinesApi
     @Suppress("unused")
-    suspend fun refetchLeaderboardRatings(size: Int?) =
-        UpdateResult(leaderboardRatingsUpdateService.updateRankedRatingsByRank(size ?: 1000, 10).count())
+    suspend fun refetchLeaderboardRatings(size: Int?, playlist: Playlist?) =
+        UpdateResult(leaderboardRatingsUpdateService.updateRankedRatingsByRank(
+            ranks = size ?: 1000,
+            maxBatchSize = 10,
+            playlist = playlist ?: Playlist.RankedStandard
+        ).count())
 }
